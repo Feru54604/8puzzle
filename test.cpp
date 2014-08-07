@@ -1,9 +1,10 @@
 #include <iostream>
 #include <queue>
+#include <stack>
 #include <time.h>
 
-
 int global_num;
+void solve();
 void input_tile(int[]);
 
 class puzzle
@@ -42,11 +43,19 @@ std::queue<puzzle> qu;
 puzzle* last;
 
 int main(){
+	char buf[10];
 	global_num=0;
 	srand((unsigned int)time(NULL));
 	puzzle initial;
 	initial.initialize();
-//	initial.output_tile();//初期状態
+	std::cin >> buf;
+	for(int i=0;i<9;i++){
+		initial.tile[i]=buf[i]-'0';
+	}
+	initial.zero();
+	std::cout <<  std::endl;
+	initial.output_tile();//初期状態
+/*
 	initial.tile[0]=1;
 	initial.tile[1]=2;
 	initial.tile[2]=5;
@@ -57,9 +66,11 @@ int main(){
 	initial.tile[7]=7;
 	initial.tile[8]=8;
 	initial.zero();
-	initial.output_tile();
+*/
+	std::cout << "kokomade" << std::endl;
 	initial.generate();
-	for(int i=0;i<20;i++){
+	std::cout << "iketa" << std::endl;
+	for(int i=0;i<100;i++){
 		qu.front().generate();
 		qu.pop();	
 	}
@@ -208,13 +219,30 @@ void puzzle::generate(){
 		node[i].zero();
 		node[i].prevzero=empty;
 		qu.push(node[i]);
-		node[i].output_tile();
 		if(node[i].heuristic()==0) {
 			std::cout<< "Goal" << std::endl;
 			last = &node[i];
+			std::cout << "解の表示" << std::endl;
+			solve();
 			exit(1);
 		}
 		//node[i].output_tile();
+	}
+
+}
+
+void solve(){
+	std::stack<puzzle> result;
+	while(last->root != NULL) {
+		result.push(*last);
+		last = last->root;
+		std::cout <<"rootireru" << std::endl;
+	}
+	result.push(*last);
+	std::cout << "stack complete" << std::endl;
+	while(result.empty()==0){
+		result.top().output_tile();
+		result.pop();
 	}
 
 }
